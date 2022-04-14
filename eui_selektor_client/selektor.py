@@ -7,12 +7,12 @@ from eui_selektor_client.auth import HTTPAuthClient
 from eui_selektor_client.form import FormFields
 
 
-class _EUISelektorClient:
+class _EUISelektorClient(HTTPAuthClient):
     base_url = 'https://wwwbis.sidc.be/EUI/data_internal/selektor/index.php'
     service_id = 'EUI_SELEKTOR_CLIENT'
 
     def __init__(self):
-        self.http_client = HTTPAuthClient('EUI_SELEKTOR_CLIENT')
+        super().__init__('EUI_SELEKTOR_CLIENT')
 
 
 class EUISelektorFormViewer(_EUISelektorClient):
@@ -112,7 +112,7 @@ class EUISelektorFormViewer(_EUISelektorClient):
         search_params : list of form fields
             Search parameters, with description and allowed values
         """
-        r = self.http_client.query(self.base_url)
+        r = self.query(self.base_url)
 
         b = bs4.BeautifulSoup(r.content, features='html.parser')
         tables = b.find_all('table')
@@ -192,7 +192,7 @@ class EUISelektorClient(_EUISelektorClient):
             Search results.
         """
         search_params = self._fill_default_search_params(search_params)
-        r = self.http_client.query(self.base_url, params=search_params)
+        r = self.query(self.base_url, params=search_params)
         dfs = pd.read_html(r.content, flavor='bs4')
         try:
             return dfs[2]
