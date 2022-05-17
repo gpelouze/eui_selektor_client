@@ -8,7 +8,7 @@ from eui_selektor_client.form import FormFields
 
 
 class _EUISelektorClient(HTTPAuthClient):
-    base_url = 'https://wwwbis.sidc.be/EUI/data_internal/selektor/index.php'
+    base_url = 'https://www.sidc.be/EUI/data_internal/selektor/index.php'
     service_id = 'EUI_SELEKTOR_CLIENT'
 
     def __init__(self):
