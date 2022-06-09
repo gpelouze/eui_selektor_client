@@ -131,7 +131,7 @@ class EUISelektorFormViewer(_EUISelektorClient):
 
 
 class EUISelektorClient(_EUISelektorClient):
-    """ EUI selektor client (https://wwwbis.sidc.be/EUI/data_internal/selektor)
+    """ EUI selektor client (https://www.sidc.be/EUI/data_internal/selektor)
 
     Example
     =======

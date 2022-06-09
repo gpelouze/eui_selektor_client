@@ -71,5 +71,5 @@ client.update_credentials()
 This package is released under a MIT open source licence. See `LICENSE.txt`.
 
 
-[EUI Selektor]: https://wwwbis.sidc.be/EUI/data_internal/selektor
+[EUI Selektor]: https://www.sidc.be/EUI/data_internal/selektor
 [keyring]: https://pypi.org/project/keyring/
