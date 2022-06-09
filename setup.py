@@ -7,7 +7,7 @@ with open('requirements.txt', 'r') as f:
 
 setuptools.setup(
     name='eui_selektor_client',
-    version='2022.4.14',
+    version='2022.06.09',
     author='Gabriel Pelouze',
     author_email='gabriel.pelouze@universite-paris-saclay.fr',
     description='Lightweight client for EUI Selektor',
