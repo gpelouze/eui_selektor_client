@@ -169,7 +169,7 @@ class TestEUISelektorClient(unittest.TestCase):
             {
                 'detector[]': 'FSI',
                 'wavelnth[]': '304',
-                'imgtype[]:': 'solar image',
+                'imgtype[]': 'solar image',
                 'date_begin_start': '2021-12-01',
                 'date_begin_end': '2021-12-31',
                 'limit[]': 500,
