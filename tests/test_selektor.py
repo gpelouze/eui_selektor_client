@@ -58,6 +58,9 @@ class TestEUISelektorFormViewer(unittest.TestCase):
             'recstate[]', ['on', 'off'], comment='RECSTATE'
             ),
         FormFields.MultipleChoice(
+            'crrem[]', ['on', 'off'], comment='CRREM'
+            ),
+        FormFields.MultipleChoice(
             'compress[]', ['Lossless', 'Lossy-high quality', 'Lossy-strong',
                            'Lossy-extreme', 'None'], comment='COMPRESS \xa0'
             ),
@@ -67,6 +70,8 @@ class TestEUISelektorFormViewer(unittest.TestCase):
             ),
         FormFields.Number('combitpp_min', 0, 255, comment='COMBITPP'),
         FormFields.Number('combitpp_max', 0, 255, comment='COMBITPP'),
+        FormFields.Number('readoutm_min', 0, 5, comment='READOUTM'),
+        FormFields.Number('readoutm_max', 0, 5, comment='READOUTM'),
         FormFields.MultipleChoice(
             'ledstate[]', ['all off', 'main on', 'red on'], comment='LEDSTATE'
             ),
@@ -76,6 +81,8 @@ class TestEUISelektorFormViewer(unittest.TestCase):
             ),
         FormFields.Number('xposure_min', 0, 7200, comment='XPOSURE'),
         FormFields.Number('xposure_max', 0, 7200, comment='XPOSURE'),
+        FormFields.Number('crota_min', -360, 360, comment='CROTA'),
+        FormFields.Number('crota_max', -360, 360, comment='CROTA'),
         FormFields.Number(
             'doorpos_min', 0, 255,
             comment=('DOORPOS 0=closed. FSI: occulter=15-25, 34=open. '
@@ -96,6 +103,12 @@ class TestEUISelektorFormViewer(unittest.TestCase):
             comment=('PRIORITY 0=Low Latency. 255 = Dummy. Science data is '
                      'anything in between')
             ),
+        FormFields.Number(
+            'dsun_au_min', 0, 1.2,
+            comment='DSUN_AU Distance to the Sun in AU'),
+        FormFields.Number(
+            'dsun_au_max', 0, 1.2,
+            comment='DSUN_AU Distance to the Sun in AU'),
         FormFields.MultipleChoice(
             'doorext[]', ['open', 'closed'], comment='DOOREXT (L1+)'
             ),
@@ -125,8 +138,8 @@ class TestEUISelektorFormViewer(unittest.TestCase):
         for f1, f2 in zip(form, self.form_ref):
             if repr(f1) != repr(f2):
                 print('Mismatched fields')
-                print(f1)
-                print(f2)
+                print('(web)', f1)
+                print('(ref)', f2)
                 self.fail()
 
 
