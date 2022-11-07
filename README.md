@@ -15,6 +15,8 @@ pip install --user eui_selektor_client
 
 ## Example
 
+### Python
+
 ```python
 from eui_selektor_client import EUISelektorClient, EUISelektorFormViewer
 
@@ -49,6 +51,23 @@ if __name__ == '__main__':
     # 498  498  2021-12-26T15:32:15.297      FSI  ...  102.694615  1536.5  1536.5
     # 499  499  2021-12-26T15:30:15.296      FSI  ...  102.723120  1536.5  1536.5
 ```
+
+
+### Command line interface
+
+The above query can also be run from the command line:
+
+```bash
+# retrieve and display the search form parameters:
+eui_selektor_client --view-form
+# run a query:
+eui_selektor_client --output query_results.csv --query detector\[]:FSI wavelnth\[]:304 imgtype\[]:solar\ image date_begin_start:2021-12-01 date_begin_end:2021-12-31 limit\[]:500
+# get help:
+eui_selektor_client --help
+```
+
+(Note that the square brackets and spaces in the query parameters have to be
+escaped.)
 
 
 ## Authentication

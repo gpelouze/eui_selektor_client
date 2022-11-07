@@ -5,6 +5,12 @@ with open('README.md', 'r') as f:
 with open('requirements.txt', 'r') as f:
     requirements = f.read().strip('\n').split('\n')
 
+entry_points = {
+    'console_scripts': [
+        'eui_selektor_client=eui_selektor_client.cli:cli',
+        ]
+    }
+
 setuptools.setup(
     name='eui_selektor_client',
     version='2022.11.07',
@@ -14,6 +20,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type='text/markdown',
     url='https://github.com/gpelouze/eui_selektor_client',
+    entry_points=entry_points,
     packages=setuptools.find_packages(),
     python_requires='>=3.5',
     install_requires=requirements,
