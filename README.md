@@ -61,13 +61,13 @@ The above query can also be run from the command line:
 # retrieve and display the search form parameters:
 eui_selektor_client --view-form
 # run a query:
-eui_selektor_client --output query_results.csv --query detector\[]:FSI wavelnth\[]:304 imgtype\[]:solar\ image date_begin_start:2021-12-01 date_begin_end:2021-12-31 limit\[]:500
+eui_selektor_client --output query_results.csv --query "detector[]:FSI" "wavelnth[]:304" "imgtype[]:solar image" date_begin_start:2021-12-01 date_begin_end:2021-12-31 "limit[]:500"
 # get help:
 eui_selektor_client --help
 ```
 
-(Note that the square brackets and spaces in the query parameters have to be
-escaped.)
+(Note that query parameters containing spaces or square brackets should be put
+between quotation marks.)
 
 
 ## Authentication
