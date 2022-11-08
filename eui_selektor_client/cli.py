@@ -1,5 +1,5 @@
 import argparse
-from pandas import concat
+import pandas
 
 from eui_selektor_client import EUISelektorClient, EUISelektorFormViewer
 
@@ -30,7 +30,7 @@ def cli():
         '--output', metavar='csv_file',
         help='save the query results to a file')
     p.add_argument(
-        '--nolimit', action='store_false',
+        '--nolimit', action='store_true',
         help='make multiple queries in case maximum number of results is reached')
     args = p.parse_args()
 
@@ -42,19 +42,34 @@ def cli():
     if args.query:
         client = EUISelektorClient()
         query = parse_query_args(args.query)
+
+        if args.nolimit:  # --no-limit requires ascending sorting by date, requested sorting will be done at the end
+            req_order_by = query['orderby[]'] if 'orderby[]' in query else client.default_search_params['orderby[]']
+            req_order = query['order[]'] if 'order[]' in query else client.default_search_params['order[]']
+            query['orderby[]'] = 'date-beg'
+            query['order[]'] = 'ASC'
+            query['limit[]'] = '500'
+
         final = None
         while True:
             res = client.search(query)
             if res is None:
                 break
             else:
-                final = concat([res, final]) if query['order[]'] == 'DESC' else concat([final, res])
-                if len(res) < query['limit[]']:
+                final = pandas.concat([res, final])
+                if len(res) < int(query['limit[]']):
                     break
             if args.nolimit is False:
                 break
-            query['date_begin_start'] = res['date-beg'][0] if query['order[]'] == 'DESC' else res['date-beg'][-1]
+            # update date, hour, minute fields for next iteration
+            last_date = res['date-beg'][res.index[-1]]  # is last index because orderby and order were forced
+            query['date_begin_start'] = last_date[0:10]
+            query['date_begin_start_hour'] = last_date[11:13]
+            query['date_begin_start_minute'] = last_date[14:16]
+
         if final is not None:
+            if args.nolimit:  # re-sort values according to query/default if --nolimit is set
+                final.sort_values(by=req_order_by, ascending=req_order == 'ASC')
             res_str = final.to_csv(args.output)
             if res_str is not None:
                 print(res_str)
