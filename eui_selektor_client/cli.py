@@ -1,4 +1,5 @@
 import argparse
+from pandas import concat
 
 from eui_selektor_client import EUISelektorClient, EUISelektorFormViewer
 
@@ -28,6 +29,9 @@ def cli():
     p.add_argument(
         '--output', metavar='csv_file',
         help='save the query results to a file')
+    p.add_argument(
+        '--nolimit', action='store_false',
+        help='make multiple queries in case maximum number of results is reached')
     args = p.parse_args()
 
     if args.view_form:
@@ -38,7 +42,19 @@ def cli():
     if args.query:
         client = EUISelektorClient()
         query = parse_query_args(args.query)
-        res = client.search(query)
-        res_str = res.to_csv(args.output)
-        if res_str is not None:
-            print(res_str)
+        final = None
+        while True:
+            res = client.search(query)
+            if res is None:
+                break
+            else:
+                final = concat([res, final]) if query['order[]'] == 'DESC' else concat([final, res])
+                if len(res) < query['limit[]']:
+                    break
+            if args.nolimit is False:
+                break
+            query['date_begin_start'] = res['date-beg'][0] if query['order[]'] == 'DESC' else res['date-beg'][-1]
+        if final is not None:
+            res_str = final.to_csv(args.output)
+            if res_str is not None:
+                print(res_str)
