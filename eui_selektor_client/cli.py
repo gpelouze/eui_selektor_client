@@ -23,6 +23,9 @@ def cli():
         '--view-form', action='store_true',
         help='retrieve and display the search form parameters')
     g.add_argument(
+        '--update-credentials', action='store_true',
+        help='update the username and password stored in the keyring')
+    g.add_argument(
         '--query', metavar='param', nargs='+',
         help='run a query (parameter format: "name:value")')
     p.add_argument(
@@ -34,6 +37,10 @@ def cli():
         form_viewer = EUISelektorFormViewer()
         form = form_viewer.get_form()
         form_viewer.show_form(form)
+
+    if args.update_credentials:
+        client = EUISelektorClient()
+        client.update_credentials()
 
     if args.query:
         client = EUISelektorClient()

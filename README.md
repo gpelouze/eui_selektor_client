@@ -84,6 +84,12 @@ client = EUISelektorClient()
 client.update_credentials()
 ```
 
+or from the command line:
+
+```bash
+eui_selektor_client --update-credentials
+```
+
 
 ## License
 
