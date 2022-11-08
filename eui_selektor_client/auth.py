@@ -1,6 +1,8 @@
 import getpass
+import traceback
 
 import keyring
+import keyring.errors
 import requests
 import requests.auth
 
@@ -47,10 +49,17 @@ class CredentialsManager:
         username : str
         password : str
         """
-        credentials = self._retrieve_credentials_from_keyring()
-        if (credentials is None) or force_keyring_update:
+        try:
+            credentials = self._retrieve_credentials_from_keyring()
+            if (credentials is None) or force_keyring_update:
+                credentials = self._get_credentials_from_user()
+                self._store_credentials_to_keyring(credentials)
+        except keyring.errors.KeyringError:
+            exception_str = traceback.format_exc().splitlines()[-1]
+            print(f'Keyring error encountered ({exception_str}).\n'
+                  'The credentials will not be saved (see '
+                  'https://pypi.org/project/keyring/ for more details).')
             credentials = self._get_credentials_from_user()
-            self._store_credentials_to_keyring(credentials)
         return credentials
 
 
