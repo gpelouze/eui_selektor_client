@@ -198,3 +198,56 @@ class EUISelektorClient(_EUISelektorClient):
             return dfs[2]
         except IndexError:
             return None
+
+    def search_nolimit(self, search_params):
+        """ An extension of the search method that overrides the Selektor limit on the number of results
+
+        Parameters
+        ==========
+        search_params : dict
+            Dict of search parameters (call `.show_search_params()` to display
+            available search keywords).
+
+        Returns
+        =======
+        results : pd.DataFrame
+            Search results.
+        """
+
+        # nolimit requires ascending sorting by date, requested sorting will be done at the end
+        if 'orderby[]' in search_params:  # saves requested ordering parameter
+            req_order_by = search_params['orderby[]']
+        else:
+            req_order_by = self.default_search_params['orderby[]']
+        if 'order[]' in search_params:  # saves requested order
+            req_order = search_params['order[]']
+        else:
+            req_order = self.default_search_params['order[]']
+        search_params['orderby[]'] = 'date-beg'
+        search_params['order[]'] = 'ASC'
+        search_params['limit[]'] = '500'
+
+        final_res = None
+        last_date = ''
+        while True:
+            res = self.search(search_params)
+            if res is None:
+                break
+            else:
+                final_res = pd.concat([res, final_res])
+                if len(res) < int(search_params['limit[]']):
+                    break
+            # update date, hour, minute fields for next iteration
+            last_record_date = res['date-beg'][res.index[-1]]  # last record since orderby and order were forced
+            if last_record_date == last_date:  # means that the query did not progress in time
+                break
+            last_date = last_record_date
+            search_params['date_begin_start'] = last_date[0:10]
+            search_params['date_begin_start_hour'] = last_date[11:13]
+            search_params['date_begin_start_minute'] = last_date[14:16]
+
+        if final_res is not None:
+            final_res.sort_values(by=req_order_by, ascending=req_order == 'ASC')
+            final_res.drop_duplicates()  # required because Selektor time granularity is larger than EUI's max. cadence
+
+        return final_res
