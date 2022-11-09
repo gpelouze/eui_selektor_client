@@ -1,4 +1,6 @@
 import argparse
+import sys
+
 from eui_selektor_client import EUISelektorClient, EUISelektorFormViewer
 
 
@@ -50,7 +52,10 @@ def cli():
 
         res = client.search_nolimit(query) if args.nolimit else client.search(query)
 
-        if res is not None:
+        if res is None:
+            print('No results found')
+            sys.exit(1)
+        else:
             res_str = res.to_csv(args.output)
             if res_str is not None:
                 print(res_str)
