@@ -1,5 +1,4 @@
 import argparse
-
 from eui_selektor_client import EUISelektorClient, EUISelektorFormViewer
 
 
@@ -31,6 +30,9 @@ def cli():
     p.add_argument(
         '--output', metavar='csv_file',
         help='save the query results to a file')
+    p.add_argument(
+        '--nolimit', action='store_true',
+        help='make multiple queries in case maximum number of results is reached')
     args = p.parse_args()
 
     if args.view_form:
@@ -45,7 +47,10 @@ def cli():
     if args.query:
         client = EUISelektorClient()
         query = parse_query_args(args.query)
-        res = client.search(query)
-        res_str = res.to_csv(args.output)
-        if res_str is not None:
-            print(res_str)
+
+        res = client.search_nolimit(query) if args.nolimit else client.search(query)
+
+        if res is not None:
+            res_str = res.to_csv(args.output)
+            if res_str is not None:
+                print(res_str)
