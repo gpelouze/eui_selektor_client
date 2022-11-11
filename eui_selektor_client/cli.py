@@ -5,6 +5,7 @@ from eui_selektor_client import EUISelektorClient, EUISelektorFormViewer
 
 
 def parse_query_args(query_strings):
+
     query_dict = {}
     for param_string in query_strings:
         param_split = param_string.split(':')

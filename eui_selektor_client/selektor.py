@@ -119,15 +119,19 @@ class EUISelektorFormViewer(_EUISelektorClient):
         search_params = self._parse_detreg_form_table(tables[0])
         search_params += self._parse_main_form_table(tables[1])
 
-        return search_params
+        search_params_dict = {}
+        for p in search_params:
+            k, v = p.split(':')
+            search_params_dict[k] = v
+        return search_params_dict
 
     @staticmethod
     def show_form(form):
         """ Display the search form """
         print('EUI SELEKTOR search parameters')
         print('------------------------------')
-        for param in form:
-            print(param)
+        for k, v in form.items():
+            print(k, ':', v)
 
 
 class EUISelektorClient(_EUISelektorClient):
