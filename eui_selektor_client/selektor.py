@@ -2,7 +2,6 @@
 
 import bs4
 import pandas as pd
-
 from eui_selektor_client.auth import HTTPAuthClient
 from eui_selektor_client.form import FormFields
 
@@ -119,19 +118,15 @@ class EUISelektorFormViewer(_EUISelektorClient):
         search_params = self._parse_detreg_form_table(tables[0])
         search_params += self._parse_main_form_table(tables[1])
 
-        search_params_dict = {}
-        for p in search_params:
-            k, v = p.split(':')
-            search_params_dict[k] = v
-        return search_params_dict
+        return search_params
 
     @staticmethod
     def show_form(form):
         """ Display the search form """
         print('EUI SELEKTOR search parameters')
         print('------------------------------')
-        for k, v in form.items():
-            print(k, ':', v)
+        for param in form:
+            print(param)
 
 
 class EUISelektorClient(_EUISelektorClient):
@@ -181,7 +176,44 @@ class EUISelektorClient(_EUISelektorClient):
         params = {k: v for k, v in params.items() if v is not None}
         return params
 
-    def search(self, search_params):
+    @staticmethod
+    def valid_parameter(name, value, form):
+        """ Checks the validity of a single parameter using the information provided in form as a reference
+
+        Parameters
+        ----------
+        name: Parameter name
+        value: parameter value
+        form: reference form fromEUISelektorFormViewer.get_form()
+
+        Returns
+        -------
+        Bool
+        """
+        names = [name == p.name for p in form]
+        return name in names
+
+    def validate_search_params(self, search_params):
+        """ Checks the validity of the search parameters. If False, prints out the form for help/
+
+        Parameters
+        ----------
+        search_params
+
+        Returns
+        -------
+        Bool
+        """
+        viewer = EUISelektorFormViewer()
+        form = viewer.get_form()
+        valid = [self.valid_parameter(*parameter, form) for parameter in search_params.items()]
+        if all(valid):
+            return True
+        else:
+            print(viewer.show_form(form))
+            return False
+
+    def search(self, search_params, validate=False):
         """ Send search query and parse results
 
         Parameters
@@ -189,12 +221,17 @@ class EUISelektorClient(_EUISelektorClient):
         search_params : dict
             Dict of search parameters (call `.show_search_params()` to display
             available search keywords).
-
+        validate : bool
+            Validate input
         Returns
         =======
         results : pd.DataFrame
             Search results.
         """
+        if validate:
+            if not self.validate_search_params(search_params):
+                return None
+
         search_params = self._fill_default_search_params(search_params)
         r = self.query(self.base_url, params=search_params)
         dfs = pd.read_html(r.content, flavor='bs4')
@@ -203,7 +240,7 @@ class EUISelektorClient(_EUISelektorClient):
         except IndexError:
             return None
 
-    def search_nolimit(self, search_params):
+    def search_nolimit(self, search_params, validate=False):
         """ An extension of the search method that overrides the Selektor limit on the number of results
 
         Parameters
@@ -211,12 +248,17 @@ class EUISelektorClient(_EUISelektorClient):
         search_params : dict
             Dict of search parameters (call `.show_search_params()` to display
             available search keywords).
+        validate : bool
+            Validate input
 
         Returns
         =======
         results : pd.DataFrame
             Search results.
         """
+        if validate:
+            if not self.validate_search_params(search_params):
+                return None
 
         # nolimit requires ascending sorting by date, requested sorting will be done at the end
         if 'orderby[]' in search_params:  # saves requested ordering parameter
