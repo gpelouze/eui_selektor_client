@@ -13,7 +13,7 @@ entry_points = {
 
 setuptools.setup(
     name='eui_selektor_client',
-    version='2022.12.02',
+    version='2023.5.12',
     author='Gabriel Pelouze',
     author_email='gabriel.pelouze@universite-paris-saclay.fr',
     description='Lightweight client for EUI Selektor',
