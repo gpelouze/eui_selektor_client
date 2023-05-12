@@ -76,8 +76,8 @@ class TestEUISelektorFormViewer(unittest.TestCase):
             'ledstate[]', ['all off', 'main on', 'red on'], comment='LEDSTATE'
             ),
         FormFields.MultipleChoice(
-            'imgtype[]', ['solar image', 'LED image', 'dark image',
-                          'occulted image'], comment='IMGTYPE'
+            'imgtype[]', ['solar image', 'solar image, short', 'LED image',
+                          'dark image', 'occulted image'], comment='IMGTYPE'
             ),
         FormFields.Number('xposure_min', 0, 7200, comment='XPOSURE'),
         FormFields.Number('xposure_max', 0, 7200, comment='XPOSURE'),
@@ -118,7 +118,7 @@ class TestEUISelektorFormViewer(unittest.TestCase):
             ),
         FormFields.SingleChoice('order[]', ['ASC', 'DESC'], comment='ORDER'),
         FormFields.SingleChoice(
-            'limit[]', ['100', '500', '5000'], comment='LIMIT'
+            'limit[]', ['100', '500'], comment='LIMIT'
             ),
         FormFields.Date('date_begin_start', '', comment='DATE-BEG'),
         FormFields.Number('date_begin_start_hour', 0, 23, comment='DATE-BEG'),
